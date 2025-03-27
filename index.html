@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 페이지</title>
+  <!-- qrcode.js 라이브러리 포함 (CDN 사용 가능) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    textarea { width: 100%; height: 200px; }
+    #result { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>관리자 페이지</h1>
+  <textarea id="inputText" placeholder="텍스트를 입력하세요..."></textarea>
+  <br>
+  <button id="uploadBtn">업로드</button>
+  
+  <div id="result" style="display:none;">
+    <h2>완성되었습니다!</h2>
+    <div id="qrcode"></div>
+    <br>
+    <button id="backBtn">뒤로가기</button>
+  </div>
+  
+  <script>
+    const uploadBtn = document.getElementById("uploadBtn");
+    const backBtn = document.getElementById("backBtn");
+    const inputText = document.getElementById("inputText");
+    const resultDiv = document.getElementById("result");
+    const qrCodeDiv = document.getElementById("qrcode");
+
+    uploadBtn.addEventListener("click", () => {
+      const text = inputText.value.trim();
+      if(!text){
+        alert("텍스트를 입력하세요.");
+        return;
+      }
+      // 텍스트를 URL 인코딩하여 쿼리 파라미터로 전달
+      const encodedText = encodeURIComponent(text);
+      // 예를 들어, page.html 파일로 이동하는 링크 생성
+      const pageUrl = `${location.origin}${location.pathname.replace("admin.html", "page.html")}?text=${encodedText}`;
+      
+      // QR 코드 생성 (qrcode.js 사용)
+      qrCodeDiv.innerHTML = ""; // 기존 내용 초기화
+      new QRCode(qrCodeDiv, {
+        text: pageUrl,
+        width: 128,
+        height: 128,
+      });
+      
+      // 결과 영역 보이기
+      resultDiv.style.display = "block";
+      // 필요에 따라 관리자 입력 영역 숨기기
+      // document.body.querySelector("textarea").style.display = "none";
+      // document.getElementById("uploadBtn").style.display = "none";
+    });
+
+    backBtn.addEventListener("click", () => {
+      // 초기화하여 다시 입력할 수 있게 함
+      resultDiv.style.display = "none";
+      inputText.value = "";
+      qrCodeDiv.innerHTML = "";
+    });
+  </script>
+</body>
+</html>
